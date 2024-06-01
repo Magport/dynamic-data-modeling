@@ -67,7 +67,7 @@ def calculate_cumulative_stats(lambda_rate, time_period, size_mean, size_std, al
 # Call the function
 calculate_cumulative_stats(
     lambda_rate=5, 
-    time_period=8, 
+    time_period=10, 
     size_mean=10, 
     size_std=2, 
     alpha=0.25,   # Ideal block space ratio
