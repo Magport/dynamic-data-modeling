@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-def calculate_cumulative_stats(lambda_rate, time_period, size_mean, size_std, alpha, m, r, i, d, step_size=0.1):
+def calculate_cumulative_stats(lambda_rate, time_period, size_mean, size_std, alpha, m, r, i, d, beta, theta, gamma,step_size,):
     # Update time_period to reflect the new observation unit
     num_steps = int(time_period / step_size)
     
@@ -23,7 +23,9 @@ def calculate_cumulative_stats(lambda_rate, time_period, size_mean, size_std, al
     # Calculate the cumulative state from 1 second onwards
     for t in range(num_steps):
         # Total number of objects and total volume from 0 to the current time point
+        
         n = np.sum(arrival_counts[:t+1])
+        print(n)
         V_total = np.sum(total_volumes[:t+1])
         
         # Calculate frequency and average size
@@ -39,7 +41,7 @@ def calculate_cumulative_stats(lambda_rate, time_period, size_mean, size_std, al
         Frequency = frequencies[t]
         AverageSize = average_sizes[t]
         SizeChangeRate = size_change_rates[t]
-        D = ((alpha * m * d) / i + r * i) / (Frequency + AverageSize + SizeChangeRate)
+        D = (beta*((alpha * m * d) / i) + theta*i+gamma*d*r) / (beta*Frequency + theta*AverageSize + gamma*SizeChangeRate)
         dynamic_blocktimes[t] = D
         
         # If the calculated dynamic block time is less than t, record the time and print V_total and V_total/m
@@ -66,14 +68,17 @@ def calculate_cumulative_stats(lambda_rate, time_period, size_mean, size_std, al
 
 # Call the function
 calculate_cumulative_stats(
-    lambda_rate=5, 
+    lambda_rate=20, #average txs arrival rate
     time_period=10, 
-    size_mean=10, 
-    size_std=2, 
-    alpha=0.25,   # Ideal block space ratio
-    m=1000,      # Maximum block capacity
-    r=0.1,       # Ideal transaction change rate
-    i=15,        # Ideal number of transactions per block
+    size_mean=20, #average size of txs
+    size_std=0, 
+    alpha=0.20,   # Ideal block space ratio
+    m=20000,      # Maximum block capacity
+    r=0,       # Ideal transaction change rate
+    i=200,        # Ideal number of transactions per block
     d=6,         # Ideal block interval time
-    step_size=0.5 # Observation unit of 0.5 seconds
+    beta=0.49,
+    theta=0.5,
+    gamma=0.01,
+    step_size=0.5, # Observation unit of 0.5 seconds
 )
